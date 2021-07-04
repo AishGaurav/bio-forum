@@ -1,0 +1,163 @@
+<div class='parent-wrapper'>
+    <div class='panel1 sidebar'>
+        <div class="sidebar">
+           <label>Dashboard</label>
+           <label>Site Details</label>
+           <label>Migrations</label>
+           <label>Backups</label>
+           <label>Collaborators</label>
+           <label>Support Ticket</label>
+           <label>Open new Tickets</label>
+          </div>
+    </div>
+    <div class='panel2'>
+        <div class="button-container flexStyle1 paddingStyle">
+            <span class='floatLeft left-right-margin neutral-dark-blue'><h1>Site Details</h1></span>
+            <span class='floatRight left-right-margin neutral-dark-blue'><button class="primary-button" (click)="openModal()">Add New Site</button></span>    
+        </div>
+        <div class='searchBar flexStyle1 paddingStyle'>
+            <span class='floatLeft left-right-margin neutral-dark-blue'>
+                <form>
+                    <label for="pagination">Show</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="100" class="primary-blue-text">
+                </form>
+            </span>
+            <span class='floatRight neutral-dark-blue' style="width: 50%;">
+                <form>
+                    <input type="text" placeholder="Search.." name="search" style="width: 70%;">
+                    <button>Search</button>
+                </form>
+            </span>    
+        </div>
+
+        <div class="flexStyle3 cards-container neutral-dark-blue">
+            <div class="card-label">
+                <section class='flexStyle1 card-content'>
+                    <label>Domain & Plan Name</label>
+                    <label>Storage</label>
+                    <label>Monthly Visitor</label>
+                    <label>Domains</label>
+                    <label>Status</label>
+                </section>
+            </div>            
+            <div class="flexStyle1 card" *ngFor="let i of domainData">
+                <section class='card-content'>
+                    <span class='domainName-container'>
+                        <section>{{ i.domain }}</section>
+                        <section>Professional Plan</section>
+                    </span>
+                    <span class='storage-container'>
+                        <section><meter id="storage" value="{{ i.leftStorage }}" min="0" max="{{ i.totalStorage }}"></meter></section>
+                        <section><label>{{ i.leftStorage }} of {{ i.totalStorage }}</label></section>
+                    </span>
+                    <span class='visitor-container'>
+                        <section><meter id="visitor" value="{{ i.montlyVisitor }}" min="0" max="{{ i.monthlyVisitorCapacity }}"></meter></section>
+                        <section><label>{{ i.montlyVisitor }} of {{ i.monthlyVisitorCapacity }}</label></section>
+                    </span>
+                    <span class='domain-container data-container'>
+                        <!-- <button class="primary-button"
+                            [ngClass]="{'primary':i.domainTag === 'Primary', 'staging':i.domainTag === 'Staging', 'add-on':i.domainTag === 'Add On'}"
+                        >{{ i.domainTag }}</button> -->
+                        <div class="circular">
+                            <div class="inner"></div>
+                            <div class="number">{{ i.usedDomains }}/{{ i.availableDomains }}</div>
+                            <div class="circle">
+                              <div class="bar left">
+                                <div class="progress"></div>
+                              </div>
+                              <div class="bar right">
+                                <div class="progress"></div>
+                              </div>
+                            </div>
+                          </div>
+                    </span>
+                    <span class='status-container data-container'>
+                        <button class="primary-button"
+                            [ngClass]="{'active-status':i.status === 'Active', 'inactive-status':i.status === 'Inactive'}"
+                        >{{ i.status }}</button>
+                    </span>
+                </section>
+                <section *ngIf="i.subdomain.length > 0" class="subdomain-container">
+                    <div *ngFor="let j of i.subdomain" class='card-sundomain'>
+                        <section class='card-content card-sundomain'>
+                            <span class='domainName-container'><section>{{ j.name }}</section></span>
+                            <span class='storage-container'><section><label>{{ j.usedStorage }}</label></section></span>
+                            <span class='visitor-container'><section><label>{{ j.montlyVisitor }}</label></section></span>
+                            <span class='domain-container data-container'>
+                                <button class="primary-button"
+                                    [ngClass]="{'primary':j.domainTag === 'Primary', 'staging':j.domainTag === 'Staging', 'add-on':j.domainTag === 'Add On'}"
+                                >{{ j.domainTag }}</button>
+                            </span>
+                            <span class='status-container data-container'>
+                                <button class="primary-button"
+                                    [ngClass]="{'active-status':j.status === 'Active', 'inactive-status':j.status === 'Inactive'}"
+                                >{{ j.status }}</button>
+                            </span>
+                        </section>
+                    </div>
+                </section>           
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert" [class.visible]="isVisible"> 
+    <div *ngIf='SHOW_FORM' style="width: 100%;" class='box-shadow'>
+        <section class="neutral-dark-blue large-font-size"><label style="margin-left: 30px;">Add Domain Details</label></section>
+        <hr>
+        <div class="form-conatiner">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" style="width: 90%;">
+                <div class="form-row">
+                    <div class="form-group col-5">
+                        <label>Domain Name</label>
+                        <input type="text" formControlName="domain" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.domain.errors }" />
+                        <div *ngIf="submitted && f.domain.errors" class="invalid-feedback">
+                            <div *ngIf="f.domain.errors.required">Domain Name is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-5">
+                        <label>Storage</label>
+                        <input type="text" formControlName="storage" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.storage.errors }" />
+                        <div *ngIf="submitted && f.storage.errors" class="invalid-feedback">
+                            <div *ngIf="f.storage.errors.required">Storage is required</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="form-row">
+                    <div class="form-group col-5">
+                        <label>Sub Domain Name</label>
+                        <input type="text" formControlName="subdomainName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.subdomainName.errors }" />
+                        <div *ngIf="submitted && f.subdomainName.errors" class="invalid-feedback">
+                            <div *ngIf="f.subdomainName.errors.required">Sub Domain Name is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-5">
+                        <label>Monthly Visitor</label>
+                        <input type="text" formControlName="montlyVisitor" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.montlyVisitor.errors }" />
+                        <div *ngIf="submitted && f.montlyVisitor.errors" class="invalid-feedback">
+                            <div *ngIf="f.montlyVisitor.errors.required">Monthly Visitor is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-5">
+                        <label>Used Domains</label>
+                        <input type="text" formControlName="availableDomains" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.availableDomains.errors }" />
+                        <div *ngIf="submitted && f.availableDomains.errors" class="invalid-feedback">
+                            <div *ngIf="f.availableDomains.errors.required">Used Domains is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+    
+                <div class="form-action">
+                    <button class="primary-button">Save Changes</button>
+                    <button class="secondary-button" type="reset" (click)="onReset()">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
